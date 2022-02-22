@@ -1,22 +1,44 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 
 export const getUser = createAsyncThunk("Home/getUser", async () => {
-    let response = await fetch("https://randomuser.me/api/");
-    let json = await response.json();
-    console.log(json)
-    return json;
+    const response = await fetch("https://randomuser.me/api/");
+    const json = await response.json();
+    const data = await json
+    const userData = await data.results[0]
+    return userData;
 })
+
+const initialState = {
+    status: null,
+    cards: [],
+    cardInformation: [
+      {
+        cardName: "",
+        cardNumber: "1234567891011121",
+        cardMonth: "12",
+        cardYear: "21",
+        ccv: "111",
+        bankName: "Visa",
+        cardStateActive: false
+      }
+    ]
+  };
 
 const userSlice = createSlice({
     name: "card",
-    initialState: {
-        user: [],
-        status: null
+    initialState,
+    reducers: {
+        addUser: (state, action) => {
+            state.cardInformation = [...state.cardInformation, action.payload]
+        }
     },
     extraReducers: {
         [getUser.fulfilled]: (state, action) => {
-            // let updatedUser = state.user.concat(action.payload);
-            state.user = action.payload;
+            const {first, last} = action.payload.name;
+            let wholeName = first + " " + last;
+            for (let i = 0; i < state.cardInformation.length; i++) {
+              state.cardInformation[i].cardName = wholeName.toUpperCase();
+            }
             state.status = true;
         },
         [getUser.pending]: (state) => {
@@ -28,5 +50,7 @@ const userSlice = createSlice({
     }
 
 })
+
+export const {addUser} = userSlice.actions
 
 export default userSlice.reducer;
