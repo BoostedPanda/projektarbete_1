@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector, useDispatch } from "react-redux"
 import { getUser } from "../redux/userSlice"
 import { Link } from "react-router-dom"
+import ActiveCard from '../components/ActiveCard'
 
 
 function Home() {
@@ -11,6 +12,7 @@ function Home() {
   return (
     <div>
       <h2>Home</h2>
+      <ActiveCard/>
       <div>
         <Link to="/addcard"><button>Add card</button></Link>
       </div>

@@ -7,17 +7,19 @@ import aExpress from "../logos/americanexpress.png"
 
 
 const currentYear = new Date().getFullYear();
+const getTwodigitYear = parseInt( currentYear.toString().substring(2))
 const monthsArr = Array.from({ length: 12 }, (x, i) => {
   const month = i + 1;
   return month <= 9 ? 0 + month : month;
 });
-const yearsArr = Array.from({ length: 9 }, (_x, i) => currentYear + i);
+const yearsArr = Array.from({ length: 9 }, (_x, i) => getTwodigitYear + i);
+
 
 const AddCardInfo = ({ cardMonth, cardYear }) => {
   const dispatch = useDispatch()
   const { cardInformation } = useSelector((state) => state.userList)
   const cardData = {
-    cardName: "",
+    cardName: cardInformation[0].cardName,
     cardNumber: "#### #### #### ####",
     cardMonth: "MM",
     cardYear: "YY",
@@ -26,17 +28,15 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
   };
   const [value, setValue] = useState(cardData)
 
-
-
   const testsend = () => {
     const cardInformation =
     {
-      cardName: "",
-      cardNumber: "1234567891011121",
-      cardMonth: "12",
-      cardYear: "21",
-      ccv: "111",
-      bankName: "Visa",
+      cardName: value.cardName,
+      cardNumber: value.cardNumber,
+      cardMonth: value.cardMonth,
+      cardYear: value.cardYear,
+      ccv: value.ccv,
+      bankName: value.bankName,
       cardStateActive: false
     }
 
@@ -44,11 +44,19 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
   }
 
 
-
   const testOnchange = (e) => {
     const nextCard = {
       ...value,
       [e.target.name]: e.target.value
+    };
+    setValue(nextCard);
+
+  }
+
+  const handleBankChange = (e) => {
+    const nextCard = {
+      ...value,
+      [e.target.name]: e.target.className
     };
     setValue(nextCard);
 
@@ -61,17 +69,19 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
   formatCC(1234567890123456)
 
 
+
   return (
     <div>
-      <h1>Add card</h1>
       <button onClick={() => { testsend() }}>Send user</button>
       <button onClick={() => { console.log(cardInformation) }}>Log user</button>
+      <button onClick={() => { console.log(value) }}>Log state</button>
       <div id='cardplaceholder'>
-        
+
         <p id='cardNumber'>Cardnumber: {formatCC(value.cardNumber)}</p>
         <p>Cardholder: {cardInformation[0].cardName}</p>
         <p id='month'>Expiration Date: {value.cardMonth}/{value.cardYear}</p>
         <p id='cvc'>ccv/cvc: {value.ccv}</p>
+       <p id='bank'>Selected bank: {value.bankName}</p>  {/* not permanent */}
 
       </div>
       <form>
@@ -82,10 +92,10 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
           </div>
           <div>
             <label htmlFor='cardName'>Card Name</label>
-            <input name='cardName' type="text" disabled placeholder={cardInformation[0].cardName} required/>
+            <input name='cardName' type="text" disabled value={cardInformation[0].cardName} required/>
           </div>
 
-          
+
           <label htmlFor='cardMonth'>Expiration Date</label>
           <select name='cardMonth' value={cardMonth} onChange={testOnchange} required>
             <option value='' disabled selected hidden>Month</option>
@@ -112,9 +122,9 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
           </div>  
 
           <div>
-          <img src={visa}/>
-          <img className='master' src={mastercard}/>
-          <img src={aExpress}/>
+          <img onClick={handleBankChange} name="bankName" className="visa" src={visa} alt="visa"/>
+          <img onClick={handleBankChange} name="bankName" className='mastercard' src={mastercard} alt="mastercard"/>
+          <img onClick={handleBankChange} name="bankName" className="aExpress" src={aExpress} alt="aExpress"/>
           </div>
         </div>
       </form>
