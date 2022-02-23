@@ -18,8 +18,8 @@ const initialState = {
         cardMonth: "12",
         cardYear: "21",
         ccv: "111",
-        bankName: "Visa",
-        cardStateActive: false
+        bankName: "visa",
+        cardStateActive: true
       }
     ]
   };
