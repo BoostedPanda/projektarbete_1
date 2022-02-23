@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from "react-redux"
 import { addUser } from "../redux/userSlice"
+import visa from "../logos/visa.png"
+import mastercard from "../logos/mastercard.png"
+import aExpress from "../logos/americanexpress.png"
+
 
 const currentYear = new Date().getFullYear();
 const monthsArr = Array.from({ length: 12 }, (x, i) => {
@@ -14,7 +18,7 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
   const { cardInformation } = useSelector((state) => state.userList)
   const cardData = {
     cardName: "",
-    cardNumber: "XXXX XXXX XXXX XXXX",
+    cardNumber: "#### #### #### ####",
     cardMonth: "MM",
     cardYear: "YY",
     ccv: "XXX",
@@ -50,6 +54,11 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
 
   }
 
+  const formatCC = (numbers) => {
+    return String(numbers).replace(/\d{4}(?=.)/g, '$& ')
+  }
+  
+  formatCC(1234567890123456)
 
 
   return (
@@ -58,7 +67,8 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
       <button onClick={() => { testsend() }}>Send user</button>
       <button onClick={() => { console.log(cardInformation) }}>Log user</button>
       <div id='cardplaceholder'>
-        <p id='cardNumber'>Cardnumber: {value.cardNumber}</p>
+        
+        <p id='cardNumber'>Cardnumber: {formatCC(value.cardNumber)}</p>
         <p>Cardholder: {cardInformation[0].cardName}</p>
         <p id='month'>Expiration Date: {value.cardMonth}/{value.cardYear}</p>
         <p id='cvc'>ccv/cvc: {value.ccv}</p>
@@ -68,16 +78,16 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
         <div id='inputbox'>
           <div>
             <label htmlFor='cardNumber'>Card Number</label>
-            <input maxLength="16" name='cardNumber' type="text" onChange={testOnchange} />
+            <input maxLength="16" minLength="16" name='cardNumber' type="tel" onChange={testOnchange} required/>
           </div>
           <div>
             <label htmlFor='cardName'>Card Name</label>
-            <input name='cardName' type="text" disabled placeholder={cardInformation[0].cardName} />
+            <input name='cardName' type="text" disabled placeholder={cardInformation[0].cardName} required/>
           </div>
 
-          {/* Fixa month och year option */}
+          
           <label htmlFor='cardMonth'>Expiration Date</label>
-          <select name='cardMonth' value={cardMonth} onChange={testOnchange}>
+          <select name='cardMonth' value={cardMonth} onChange={testOnchange} required>
             <option value='' disabled selected hidden>Month</option>
 
             {monthsArr.map((val, index) => (
@@ -87,7 +97,7 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
             ))}
 
           </select>
-          <select name='cardYear' value={cardYear} onChange={testOnchange}>
+          <select name='cardYear' value={cardYear} onChange={testOnchange} required>
             <option value='' disabled selected hidden>Year</option>
 
             {yearsArr.map((val, index) => (
@@ -98,7 +108,13 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
 
           <div>
             <label htmlFor='ccv'>CCV/CVC</label>
-            <input maxLength="3" name='ccv' type="text" onChange={testOnchange} />
+            <input maxLength="3" minLength="3" name='ccv' type="tel" onChange={testOnchange} required/>
+          </div>  
+
+          <div>
+          <img src={visa}/>
+          <img className='master' src={mastercard}/>
+          <img src={aExpress}/>
           </div>
         </div>
       </form>

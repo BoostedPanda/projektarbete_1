@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* tillfällig css */
+img{
+  width: 70px;
+}
+
+.master {
+  width: 50px;
+}
