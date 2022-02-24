@@ -1,136 +1,151 @@
-import React, { useState } from 'react'
-import { useSelector, useDispatch } from "react-redux"
-import { addUser } from "../redux/userSlice"
-import visa from "../logos/visa.png"
-import mastercard from "../logos/mastercard.png"
-import aExpress from "../logos/americanexpress.png"
-
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addUser } from "../redux/userSlice";
+import visa from "../logos/visa.png";
+import mastercard from "../logos/mastercard.png";
+import aExpress from "../logos/americanexpress.png";
 
 const currentYear = new Date().getFullYear();
-const getTwodigitYear = parseInt( currentYear.toString().substring(2))
+const getTwodigitYear = parseInt(currentYear.toString().substring(2));
 const monthsArr = Array.from({ length: 12 }, (x, i) => {
   const month = i + 1;
   return month <= 9 ? 0 + month : month;
 });
 const yearsArr = Array.from({ length: 9 }, (_x, i) => getTwodigitYear + i);
 
-
 const AddCardInfo = ({ cardMonth, cardYear }) => {
-  const dispatch = useDispatch()
-  const { cardInformation } = useSelector((state) => state.userList)
+  const dispatch = useDispatch();
+  const { cardInformation } = useSelector((state) => state.userList);
   const cardData = {
     cardName: cardInformation[0].cardName,
     cardNumber: "#### #### #### ####",
     cardMonth: "MM",
     cardYear: "YY",
     ccv: "XXX",
-    bankName: ""
+    bankName: "",
   };
-  const [value, setValue] = useState(cardData)
+  const [value, setValue] = useState(cardData);
 
   const testsend = () => {
-    const cardInformation =
-    {
+    const cardInformation = {
       cardName: value.cardName,
       cardNumber: value.cardNumber,
       cardMonth: value.cardMonth,
       cardYear: value.cardYear,
       ccv: value.ccv,
       bankName: value.bankName,
-      cardStateActive: false
-    }
+      cardStateActive: false,
+    };
 
-    dispatch(addUser(cardInformation))
-  }
-
+    dispatch(addUser(cardInformation));
+  };
 
   const testOnchange = (e) => {
     const nextCard = {
       ...value,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     };
     setValue(nextCard);
-
-  }
+  };
 
   const handleBankChange = (e) => {
     const nextCard = {
       ...value,
-      [e.target.name]: e.target.className
+      [e.target.name]: e.target.className,
     };
     setValue(nextCard);
 
-  }
+    console.log(nextCard);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (cardInformation.length <= 3) {
+      dispatch(addUser(value));
+      setValue(cardData);
+      console.log(cardInformation);
+    } else {
+      alert("Fullt i din E-wallet");
+    }
+  };
 
   const formatCC = (numbers) => {
-    return String(numbers).replace(/\d{4}(?=.)/g, '$& ')
-  }
-  
-  formatCC(1234567890123456)
+    return String(numbers).replace(/\d{4}(?=.)/g, "$& ");
+  };
 
-
+  formatCC(1234567890123456);
 
   return (
     <div>
-      <button onClick={() => { testsend() }}>Send user</button>
-      <button onClick={() => { console.log(cardInformation) }}>Log user</button>
-      <button onClick={() => { console.log(value) }}>Log state</button>
-      <div id='cardplaceholder'>
+      <button onClick={() => {testsend();}}>Send user</button>
+      <button onClick={() => {console.log(cardInformation);}}>Log user</button>
+      <button onClick={() => {console.log();}}>Log state</button>
 
-        <p id='cardNumber'>Cardnumber: {formatCC(value.cardNumber)}</p>
+      <div id="cardplaceholder">
+        <p id="cardNumber">Cardnumber: {formatCC(value.cardNumber)}</p>
         <p>Cardholder: {cardInformation[0].cardName}</p>
-        <p id='month'>Expiration Date: {value.cardMonth}/{value.cardYear}</p>
-        <p id='cvc'>ccv/cvc: {value.ccv}</p>
-       <p id='bank'>Selected bank: {value.bankName}</p>  {/* not permanent */}
-
+        <p id="month">Expiration Date: {value.cardMonth}/{value.cardYear}</p>
+        <p id="cvc">ccv/cvc: {value.ccv}</p>
+        <div id="bank">
+          Selected bank: 
+          {value.bankName === "visa" ? (<img name="bankName" className="visa" src={visa} alt="visa" />) 
+          : value.bankName === "mastercard" ? (<img name="bankName" className="mastercard" src={mastercard} alt="mastercard"/>) 
+          : value.bankName === "aExpress" ? (<img name="bankName" className="aExpress" src={aExpress} alt="aExpress"/>) 
+          : null}
+        </div>
       </div>
-      <form>
-        <div id='inputbox'>
+      <form onSubmit={handleSubmit}>
+        <div id="inputbox">
           <div>
-            <label htmlFor='cardNumber'>Card Number</label>
-            <input maxLength="16" minLength="16" name='cardNumber' type="tel" onChange={testOnchange} required/>
+            <label htmlFor="cardNumber">Card Number</label>
+            <input maxLength="16" minLength="16" name="cardNumber" type="tel" onChange={testOnchange} required/>
           </div>
           <div>
-            <label htmlFor='cardName'>Card Name</label>
-            <input name='cardName' type="text" disabled value={cardInformation[0].cardName} required/>
+            <label htmlFor="cardName">Card Name</label>
+            <input name="cardName" type="text" disabled value={cardInformation[0].cardName} required/>
           </div>
 
-
-          <label htmlFor='cardMonth'>Expiration Date</label>
-          <select name='cardMonth' value={cardMonth} onChange={testOnchange} required>
-            <option value='' disabled selected hidden>Month</option>
+          <label htmlFor="cardMonth">Expiration Date</label>
+          <select name="cardMonth" value={cardMonth} onChange={testOnchange} defaultValue={"hidden"} required>
+            <option value="hidden" disabled hidden>
+              Month
+            </option>
 
             {monthsArr.map((val, index) => (
               <option key={index} value={val}>
                 {val}
               </option>
             ))}
-
           </select>
-          <select name='cardYear' value={cardYear} onChange={testOnchange} required>
-            <option value='' disabled selected hidden>Year</option>
+          <select name="cardYear" value={cardYear} onChange={testOnchange} defaultValue={"hidden"} required>
+            <option value="hidden" disabled hidden>
+              Year
+            </option>
 
             {yearsArr.map((val, index) => (
-              <option key={index} value={val}>{val}</option>
+              <option key={index} value={val}>
+                {val}
+              </option>
             ))}
           </select>
 
+          <div>
+            <label htmlFor="ccv">CCV/CVC</label>
+            <input maxLength="3" minLength="3" name="ccv" type="tel" onChange={testOnchange} required/>
+          </div>
 
           <div>
-            <label htmlFor='ccv'>CCV/CVC</label>
-            <input maxLength="3" minLength="3" name='ccv' type="tel" onChange={testOnchange} required/>
-          </div>  
-
-          <div>
-          <img onClick={handleBankChange} name="bankName" className="visa" src={visa} alt="visa"/>
-          <img onClick={handleBankChange} name="bankName" className='mastercard' src={mastercard} alt="mastercard"/>
-          <img onClick={handleBankChange} name="bankName" className="aExpress" src={aExpress} alt="aExpress"/>
+            <p>Choose vendor:</p>
+            <img onClick={handleBankChange} name="bankName" className="visa" src={visa} alt="visa"/>
+            <img onClick={handleBankChange} name="bankName" className="mastercard" src={mastercard} alt="mastercard"/>
+            <img onClick={handleBankChange} name="bankName"  className="aExpress" src={aExpress} alt="aExpress"/>
           </div>
         </div>
+        <button>Submit</button>
       </form>
-
     </div>
-  )
-}
+  );
+};
 
-export default AddCardInfo
+export default AddCardInfo;

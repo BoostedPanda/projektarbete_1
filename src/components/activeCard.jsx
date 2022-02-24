@@ -1,32 +1,37 @@
-import React from 'react'
-import { useSelector, useDispatch } from "react-redux"
-import visa from "../logos/visa.png"
-import mastercard from "../logos/mastercard.png"
-import aExpress from "../logos/americanexpress.png"
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import RenderCard from "./RenderCard";
 
 function ActiveCard() {
-  const { cardInformation } = useSelector((state) => state.userList)
+  const { cardInformation } = useSelector((state) => state.userList);
+  const [state, setState] = useState(cardInformation);
 
-  const activeCard = cardInformation.filter(value => {
-    return (
-      value.cardStateActive === true
-    )
-  })
-    
+  const activeCard = cardInformation.filter((value) => {
+    return value.cardStateActive === true;
+  });
+
+  const inactiveCards = cardInformation.filter((state) => {
+    return state.cardStateActive !== true;
+  });
+
+  const allCards = [...activeCard, ...inactiveCards];
+
+  // console.log("alla", allCards);
+  // console.log("active", activeCard);
+  // console.log("inactive", inactiveCards);
+
+
   return (
     <div>
       <h3>Active card!</h3>
-      <p id='cardNumber'>Cardnumber: {activeCard[0].cardNumber}</p>
-      <p>Cardholder: {activeCard[0].cardName}</p>
-      <p id='month'>Expiration Date: {activeCard[0].cardMonth}/{activeCard[0].cardYear}</p>
-      <p id='cvc'>ccv/cvc: {activeCard[0].ccv}</p>
-      <div> {/* Optimize this potato code */}
-        {activeCard[0].bankName === "visa" && <img name="bankName" className="visa" src={visa} alt="visa"/>}
-        {activeCard[0].bankName === "mastercard" && <img name="bankName" className='mastercard' src={mastercard} alt="mastercard"/>}
-        {activeCard[0].bankName === "aExpress" && <img name="bankName" className="aExpress" src={aExpress} alt="aExpress"/>}
+      <RenderCard card={activeCard} />
+      <div>
+        <h2>Inactive cards!</h2>
+        {console.log(inactiveCards)}
+        <RenderCard card={inactiveCards} />
       </div>
     </div>
-  )
+  );
 }
 
-export default ActiveCard
+export default ActiveCard;
