@@ -1,20 +1,19 @@
-import React from 'react'
-import AddCardInfo from '../components/AddCardInfo'
-import {Link} from "react-router-dom"
+import React from "react";
+import AddCardInfo from "../components/AddCardInfo";
+import { Link } from "react-router-dom";
 
 function Addcard() {
-
   return (
-    <div>AddCard
+    <div>
+      AddCard
       <div>
         <Link to="/">
-        <button>Go back!</button>
+          <button>Go back!</button>
         </Link>
       </div>
-            <AddCardInfo/>
+      <AddCardInfo />
     </div>
-    
-  )
+  );
 }
 
-export default Addcard
+export default Addcard;
