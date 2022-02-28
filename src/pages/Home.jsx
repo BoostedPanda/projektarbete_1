@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUser } from "../redux/userSlice";
 import { Link } from "react-router-dom";
-import ActiveCard from "../components/ActiveCard";
+import ActiveCard from "../components/activeCard";
 
 function Home() {
   const dispatch = useDispatch();

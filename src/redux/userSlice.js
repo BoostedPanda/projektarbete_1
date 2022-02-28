@@ -30,6 +30,9 @@ const userSlice = createSlice({
     reducers: {
         addUser: (state, action) => {
             state.cardInformation = [...state.cardInformation, action.payload]
+        },
+        removeUser: (state, action) => {
+          state.cardInformation = state.cardInformation.filter(user => user.cardNumber !== action.payload)
         }
     },
     extraReducers: {
@@ -51,6 +54,6 @@ const userSlice = createSlice({
 
 })
 
-export const {addUser} = userSlice.actions
+export const {addUser, removeUser} = userSlice.actions
 
 export default userSlice.reducer;

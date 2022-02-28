@@ -23,6 +23,7 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
     cardYear: "YY",
     ccv: "XXX",
     bankName: "",
+    cardStateActive: false,
   };
   const [value, setValue] = useState(cardData);
 

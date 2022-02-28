@@ -1,18 +1,33 @@
 import visa from "../logos/visa.png";
 import mastercard from "../logos/mastercard.png";
 import aExpress from "../logos/americanexpress.png";
+import { useDispatch, useSelector } from "react-redux";
+import {removeUser} from "../redux/userSlice"
 
 const formatCC = (numbers) => {
   return String(numbers).replace(/\d{4}(?=.)/g, "$& ");
 };
 
 const RenderCard = ({ card }) => {
+  const dispatch = useDispatch()
+
   return (
     <>
       {card.map((creditCard) => {
+
+          const handleRemoveCard = (number) => {
+            if(!creditCard.cardStateActive) {
+              dispatch(removeUser(number))
+            } else {
+              alert("Can't remove an active card!");
+            }
+
+          }
+
         return (
           <>
-            <button>DELETE</button>
+          <button onClick={() => {console.log(creditCard)}}>Log</button>
+            <button onClick={() => {handleRemoveCard(creditCard.cardNumber)}}>DELETE</button>
             <p id="cardNumber">Cardnumber: {formatCC(creditCard.cardNumber)}</p>
             <p>Cardholder: {creditCard.cardName}</p>
             <p id="month">Expiration Date: {creditCard.cardMonth}/{creditCard.cardYear}</p>
@@ -24,7 +39,7 @@ const RenderCard = ({ card }) => {
           </>
         );
       })}
-     
+
     </>
   );
 };
