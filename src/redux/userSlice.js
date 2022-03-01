@@ -33,7 +33,14 @@ const userSlice = createSlice({
         },
         removeUser: (state, action) => {
           state.cardInformation = state.cardInformation.filter(user => user.cardNumber !== action.payload)
+        },
+        handleActive: (state, action) => {
+          const card = state.cardInformation.find((card) => card.cardNumber === action.payload)
+          if(card){
+            card.cardStateActive = !card.cardStateActive
+          }
         }
+
     },
     extraReducers: {
         [getUser.fulfilled]: (state, action) => {
@@ -54,6 +61,6 @@ const userSlice = createSlice({
 
 })
 
-export const {addUser, removeUser} = userSlice.actions
+export const {addUser, removeUser,handleActive} = userSlice.actions
 
 export default userSlice.reducer;
