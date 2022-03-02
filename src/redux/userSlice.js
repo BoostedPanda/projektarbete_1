@@ -34,6 +34,14 @@ const userSlice = createSlice({
       if (card) {
         card.cardStateActive = !card.cardStateActive
       }
+    },
+    handleDeactivate: (state, action) => {
+      console.log("asd")
+      const card = state.cardInformation.find((card) => card.cardNumber === action.payload)
+      console.log(card)
+      if (card) {
+        card.cardStateActive = !card.cardStateActive
+      }
     }
 
   },
@@ -49,12 +57,13 @@ const userSlice = createSlice({
         cardYear: "21",
         ccv: "111",
         bankName: "visa",
-        cardStateActive: true
+        cardStateActive: true,
+        cardType: 'dark'
       })
     })
   }
 })
 
-export const { addUser, removeUser, handleActive } = userSlice.actions
+export const { addUser, removeUser, handleActive, handleDeactivate } = userSlice.actions
 
 export default userSlice.reducer;

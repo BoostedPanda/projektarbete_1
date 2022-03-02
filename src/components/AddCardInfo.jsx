@@ -1,151 +1,210 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice";
-import { GetCardType } from "./utils";
+import { Container, Input, InputWrapper, SegmentedControl, Button, Card, Image, createStyles, SimpleGrid } from "@mantine/core";
+import { CreditCardIcon, PersonIcon, CalendarIcon, NoteIcon, XCircleFillIcon, CheckCircleFillIcon } from "@primer/octicons-react";
+import { HeaderTitle, CreditCard } from "../components/extras";
+import { Link } from "react-router-dom";
+import { useNotifications } from '@mantine/notifications';
 
-const currentYear = new Date().getFullYear();
-const getTwodigitYear = parseInt(currentYear.toString().substring(2));
-const monthsArr = Array.from({ length: 12 }, (x, i) => {
-  const month = i + 1;
-  return month <= 9 ? 0 + month : month;
-});
-const yearsArr = Array.from({ length: 9 }, (_x, i) => getTwodigitYear + i);
+const headerImages = [
+  "https://i.redd.it/5hox9ss0wdl51.jpg",
+  "https://static-cdn.jtvnw.net/jtv_user_pictures/f09cc2ba-1703-4348-a094-dd950c657c6c-profile_banner-480.png",
+  "https://www.streamscheme.com/wp-content/uploads/2020/04/emote-list-banner.jpg"
+]
 
+const useStyles = createStyles((theme) => ({
+  textOverlay: {
+    position: "absolute",
+    zIndex: 1,
+    left: "32%",
+    top: "7%",
+    color: "white"
+  },
+  cardPosition: {
+    marginTop: "10%"
+  },
+  rowPadding: {
+    paddingBottom: 8
+  }
+}))
 
-const AddCardInfo = ({ cardMonth, cardYear }) => {
+const AddCardInfo = () => {
   const dispatch = useDispatch();
+  const { classes } = useStyles();
+  const notifications = useNotifications();
   const { cardInformation } = useSelector((state) => state.userList);
+ 
+  const [cardNumber, setCardNumber] = useState("#### #### #### ####")
+  const [cardMonth, setCardMonth] = useState(12)
+  const [cardYear, setCardYear] = useState(22)
+  const [cardCcv, setCardCcv] = useState("123")
+  const [cardIssuer, setCardIssuer] = useState("visa")
+  const [cardType, setCardType] = useState("light")
+  const [headerImageId, setHeaderImageId] = useState(0)
 
   if (cardInformation.length === 0) {
     window.location.href = window.location.origin;
   }
 
-  const cardData = {
-    cardName: cardInformation[0].cardName,
-    cardNumber: "#### #### #### ####",
-    cardMonth: "MM",
-    cardYear: "YY",
-    ccv: "XXX",
-    bankName: "",
-    cardStateActive: false,
-  };
-  const [value, setValue] = useState(cardData);
-
-  const testsend = () => {
-    const cardInformation = {
-      cardName: value.cardName,
-      cardNumber: value.cardNumber,
-      cardMonth: value.cardMonth,
-      cardYear: value.cardYear,
-      ccv: value.ccv,
-      bankName: value.bankName,
-      cardStateActive: false,
-    };
-
-    dispatch(addUser(cardInformation));
-  };
-
-  const testOnchange = (e) => {
-    const nextCard = {
-      ...value,
-      [e.target.name]: e.target.value,
-    };
-    setValue(nextCard);
-  };
-
-  const handleBankChange = (e) => {
-    const nextCard = {
-      ...value,
-      [e.target.name]: e.target.className,
-    };
-    setValue(nextCard);
-
-    console.log(nextCard);
-  };
+  useEffect(() => {
+    setHeaderImageId(Math.floor(Math.random() * (headerImages.length - 0) + 0))
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (cardInformation.length <= 3) {
-      dispatch(addUser(value));
-      setValue(cardData);
-      console.log(cardInformation);
-    } else {
-      alert("Fullt i din E-wallet");
-    }
-  };
+    const cardExists = cardInformation.filter((value) => {
+      return value.cardNumber === cardNumber;
+    }).length > 0;
 
-  const formatCC = (numbers) => {
-    return String(numbers).replace(/\d{4}(?=.)/g, "$& ");
+    if (cardExists) {
+      return notifications.showNotification({
+        color: "red",
+        icon: <XCircleFillIcon/>,
+        title: 'Error!',
+        message: 'A card with the same number already exists!',
+      })
+    }
+
+    const card = {
+      cardName: cardInformation[0].cardName,
+      cardNumber: cardNumber,
+      cardMonth: cardMonth,
+      cardYear: cardYear,
+      ccv: cardCcv,
+      bankName: cardIssuer,
+      cardType: cardType,
+      cardStateActive: false,
+    };
+
+    if (cardInformation.length <= 3 && cardNumber.length === 16 && cardCcv.length === 3) {
+      dispatch(addUser(card));
+
+      const inputElements = document.getElementsByTagName('input');
+
+      for (var i=0; i < inputElements.length; i++) {
+        if (inputElements[i].type === 'text' && !inputElements[i].readOnly) {
+          inputElements[i].value = '';
+        }
+      }
+
+      setCardNumber("#### #### #### ####")
+      setCardMonth(12)
+      setCardYear(22)
+      setCardCcv("123")
+
+      return notifications.showNotification({
+        color: "green",
+        icon: <CheckCircleFillIcon/>,
+        title: 'Yay!',
+        message: 'Your card was added to your E-wallet!',
+      })
+    } else if (cardNumber.length < 16 || cardCcv.length < 3) {
+      return notifications.showNotification({
+        color: "red",
+        icon: <XCircleFillIcon/>,
+        title: 'Error!',
+        message: 'Credit card number/ccv is invalid!',
+      })
+    }
+
+    return notifications.showNotification({
+      color: "red",
+      icon: <XCircleFillIcon/>,
+      title: 'Oh no!',
+      message: 'Your E-wallet is full!',
+    })
   };
 
   return (
-    <div>
-      <button onClick={() => {testsend();}}>Send user</button>
-      <button onClick={() => {console.log(cardInformation);}}>Log user</button>
-      <button onClick={() => {console.log();}}>Log state</button>
+    <Card shadow="sm" padding="lg" sx={classes.cardPosition}>
+      <Card.Section>
+          <HeaderTitle size={1} sx={classes.textOverlay}>
+            Projekt Arbete PogU
+          </HeaderTitle>
+        <Image src={headerImages[headerImageId]} height={160} />
+      </Card.Section>
 
-      <div id="cardplaceholder">
-        <p id="cardNumber">Cardnumber: {formatCC(value.cardNumber)}</p>
-        <p>Cardholder: {cardInformation[0].cardName}</p>
-        <p id="month">Expiration Date: {value.cardMonth}/{value.cardYear}</p>
-        <p id="cvc">ccv/cvc: {value.ccv}</p>
-        <div id="bank">
-          Selected bank: 
-          <GetCardType type={value.bankName === "" ? undefined : value.bankName} />
-        </div>
-      </div>
+      <Container sx={() => ({ marginBlock: 50, display: "flex", justifyContent: "center" })}>
+        <CreditCard
+          bankName='Peepo Bank'
+          cardHolder={cardInformation[0].cardName}
+          cardNumber={cardNumber}
+          issuer={cardIssuer}
+          cardExpire={`${cardMonth}/${cardYear}`}
+          theme={cardType}
+        />
+      </Container>
+
       <form onSubmit={handleSubmit}>
-        <div id="inputbox">
-          {/* fixa så det bara går att skriva nummer */}
-          <div>
-            <label htmlFor="cardNumber">Card Number</label>
-            <input type="number" maxLength="16" minLength="16" name="cardNumber" onChange={testOnchange} required/>
-          </div>
-          <div>
-            <label htmlFor="cardName">Card Name</label>
-            <input name="cardName" type="text" disabled value={cardInformation[0].cardName} required/>
-          </div>
+        <Container>
+          <InputWrapper label="Credit Card Number" description="Your credit card number" size="sm" sx={classes.rowPadding}>
+            <Input maxLength={16} icon={<CreditCardIcon />} placeholder="Please enter your credit card number!" required onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+                e.target.value = value
+                setCardNumber(value)
+              }} />
+          </InputWrapper>
+          
+          <InputWrapper label="Creditholder Name" description="Your full name" size="sm" sx={classes.rowPadding}>
+            <Input icon={<PersonIcon />} defaultValue={cardInformation[0].cardName} readOnly/>
+          </InputWrapper>
 
-          <label htmlFor="cardMonth">Expiration Date</label>
-          <select name="cardMonth" value={cardMonth} onChange={testOnchange} defaultValue={"hidden"} required>
-            <option value="hidden" disabled hidden>
-              Month
-            </option>
+          <SimpleGrid cols={2}>
+            <InputWrapper label="Expire month" description="The month the credit card expires" size="sm" sx={classes.rowPadding}>
+              <Input maxLength={2} icon={<CalendarIcon />} placeholder="12" required onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+                e.target.value = value
+                setCardMonth(value)
+              }}/>
+            </InputWrapper>
 
-            {monthsArr.map((val, index) => (
-              <option key={index} value={val}>
-                {val}
-              </option>
-            ))}
-          </select>
-          <select name="cardYear" value={cardYear} onChange={testOnchange} defaultValue={"hidden"} required>
-            <option value="hidden" disabled hidden>
-              Year
-            </option>
+            <InputWrapper label="Expire year" description="The year the credit card expires" size="sm" sx={classes.rowPadding}>
+              <Input maxLength={2} icon={<CalendarIcon />} placeholder="22" required onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+                e.target.value = value
+                setCardYear(value)
+              }} />
+            </InputWrapper>
+          </SimpleGrid>
 
-            {yearsArr.map((val, index) => (
-              <option key={index} value={val}>
-                {val}
-              </option>
-            ))}
-          </select>
+          <InputWrapper label="Credit Card CCV Number" description="Your credit card CCV number" size="sm" sx={classes.rowPadding}>
+            <Input maxLength={3} icon={<NoteIcon />} placeholder="Please enter your 3 digit CCV code!" required onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+              e.target.value = value
+              setCardCcv(value)
+            }}/>
+          </InputWrapper>
 
-          <div>
-            <label htmlFor="ccv">CCV/CVC</label>
-            <input maxLength="3" minLength="3" name="ccv" type="number" onChange={testOnchange} required/>
-          </div>
+          <InputWrapper label="Credit Card Vendor" description="Your credit card Vendor" size="sm" sx={classes.rowPadding}>
+            <SegmentedControl
+              onChange={(e) => setCardIssuer(e)}
+              data={[
+                { label: 'Visa', value: 'visa'},
+                { label: 'Mastercard', value: 'mastercard' },
+                { label: 'American Express', value: 'american' },
+              ]}
+            />
+          </InputWrapper>
 
-          <div>
-            <p>Choose vendor:</p>
-            <img onClick={handleBankChange} name="bankName" className="visa" src={require("../logos/visa.png")} alt="visa"/>
-            <img onClick={handleBankChange} name="bankName" className="mastercard" src={require("../logos/mastercard.png")} alt="mastercard"/>
-            <img onClick={handleBankChange} name="bankName" className="aExpress" src={require("../logos/aExpress.png")} alt="aExpress"/>
-          </div>
-        </div>
-        <button>Submit</button>
+          <InputWrapper label="Credit Card Type" description="Please select your desired card type" size="sm">
+            <SegmentedControl
+              onChange={(e) => setCardType(e)}
+              data={[
+                { label: 'Light', value: 'light'},
+                { label: 'Dark', value: 'dark' },
+              ]}
+            />
+          </InputWrapper>
+
+          <SimpleGrid cols={2} sx={() => ({ marginTop: 20 })}>
+            <Button type="submit" fullWidth>Add card</Button>
+            <Button color="red" component={Link} to="/" fullWidth>Go back</Button>
+          </SimpleGrid>
+        </Container>
       </form>
-    </div>
+    </Card>
   );
 };
 
