@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice";
-import visa from "../logos/visa.png";
-import mastercard from "../logos/mastercard.png";
-import aExpress from "../logos/americanexpress.png";
+import { GetCardType } from "./utils";
 
 const currentYear = new Date().getFullYear();
 const getTwodigitYear = parseInt(currentYear.toString().substring(2));
@@ -13,9 +11,15 @@ const monthsArr = Array.from({ length: 12 }, (x, i) => {
 });
 const yearsArr = Array.from({ length: 9 }, (_x, i) => getTwodigitYear + i);
 
+
 const AddCardInfo = ({ cardMonth, cardYear }) => {
   const dispatch = useDispatch();
   const { cardInformation } = useSelector((state) => state.userList);
+
+  if (cardInformation.length === 0) {
+    window.location.href = window.location.origin;
+  }
+
   const cardData = {
     cardName: cardInformation[0].cardName,
     cardNumber: "#### #### #### ####",
@@ -75,8 +79,6 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
     return String(numbers).replace(/\d{4}(?=.)/g, "$& ");
   };
 
-  formatCC(1234567890123456);
-
   return (
     <div>
       <button onClick={() => {testsend();}}>Send user</button>
@@ -90,17 +92,15 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
         <p id="cvc">ccv/cvc: {value.ccv}</p>
         <div id="bank">
           Selected bank: 
-          {value.bankName === "visa" ? (<img name="bankName" className="visa" src={visa} alt="visa" />) 
-          : value.bankName === "mastercard" ? (<img name="bankName" className="mastercard" src={mastercard} alt="mastercard"/>) 
-          : value.bankName === "aExpress" ? (<img name="bankName" className="aExpress" src={aExpress} alt="aExpress"/>) 
-          : null}
+          <GetCardType type={value.bankName === "" ? undefined : value.bankName} />
         </div>
       </div>
       <form onSubmit={handleSubmit}>
         <div id="inputbox">
+          {/* fixa så det bara går att skriva nummer */}
           <div>
             <label htmlFor="cardNumber">Card Number</label>
-            <input maxLength="16" minLength="16" name="cardNumber" type="tel" onChange={testOnchange} required/>
+            <input type="number" maxLength="16" minLength="16" name="cardNumber" onChange={testOnchange} required/>
           </div>
           <div>
             <label htmlFor="cardName">Card Name</label>
@@ -133,14 +133,14 @@ const AddCardInfo = ({ cardMonth, cardYear }) => {
 
           <div>
             <label htmlFor="ccv">CCV/CVC</label>
-            <input maxLength="3" minLength="3" name="ccv" type="tel" onChange={testOnchange} required/>
+            <input maxLength="3" minLength="3" name="ccv" type="number" onChange={testOnchange} required/>
           </div>
 
           <div>
             <p>Choose vendor:</p>
-            <img onClick={handleBankChange} name="bankName" className="visa" src={visa} alt="visa"/>
-            <img onClick={handleBankChange} name="bankName" className="mastercard" src={mastercard} alt="mastercard"/>
-            <img onClick={handleBankChange} name="bankName"  className="aExpress" src={aExpress} alt="aExpress"/>
+            <img onClick={handleBankChange} name="bankName" className="visa" src={require("../logos/visa.png")} alt="visa"/>
+            <img onClick={handleBankChange} name="bankName" className="mastercard" src={require("../logos/mastercard.png")} alt="mastercard"/>
+            <img onClick={handleBankChange} name="bankName" className="aExpress" src={require("../logos/aExpress.png")} alt="aExpress"/>
           </div>
         </div>
         <button>Submit</button>
