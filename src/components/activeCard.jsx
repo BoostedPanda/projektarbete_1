@@ -1,5 +1,7 @@
 import { useSelector } from "react-redux";
 import RenderCard from "./RenderCard";
+import { Container, Center, Divider } from "@mantine/core";
+import { HeaderTitle } from "../components/extras";
 
 function ActiveCard() {
   const { cardInformation } = useSelector((state) => state.userList);
@@ -13,14 +15,21 @@ function ActiveCard() {
   });
 
   return (
-    <div>
-      <h3>Active card!</h3>
-      <RenderCard card={activeCard} />
-      <div>
-        <h2>Inactive cards!</h2>
-        <RenderCard card={inactiveCards} />
-      </div>
-    </div>
+    <Center>
+      <Container>
+        <HeaderTitle size={2} align="center" sx={(theme) => ({ paddingBlock: 20 })}>
+          My E-Wallet
+        </HeaderTitle>
+
+        <RenderCard card={activeCard} />
+        {inactiveCards.length !== 0 && (
+          <>
+            <Divider my="md" label="Inactive Cards" labelPosition="center"/>
+            <RenderCard card={inactiveCards} />
+          </>
+        )}
+      </Container>
+    </Center>
   );
 }
 
