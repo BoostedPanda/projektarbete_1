@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 
 import { HeaderTitle } from "../components/extras";
 import { Card, Image, createStyles, Button } from "@mantine/core";
+import ActiveCard from "../components/ActiveCard";
+
 
 const headerImages = [
   "https://i.redd.it/5hox9ss0wdl51.jpg",
@@ -34,7 +36,7 @@ function Home() {
         <Image src={headerImages[Math.floor(Math.random() * (headerImages.length - 0) + 0)]} height={160} />
       </Card.Section>
 
-      {/* <ActiveCard /> */}
+      <ActiveCard/>
 
       <Button component={Link} to="/addcard" variant="light" color="blue" fullWidth style={{ marginTop: 14 }}>
         Add new card
