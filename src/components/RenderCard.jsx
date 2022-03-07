@@ -25,10 +25,10 @@ const RenderCard = ({ card }) => {
   const [selectedCard, setSelectedCard] = useState(undefined);
 
   const handleRemoveCard = (creditCard) => {
-    if(!creditCard.cardStateActive) {
+    if (!creditCard.cardStateActive) {
       notifications.showNotification({
         color: "green",
-        icon: <CheckCircleFillIcon/>,
+        icon: <CheckCircleFillIcon />,
         title: 'Yay!',
         message: 'Your card has been removed!',
       })
@@ -38,17 +38,17 @@ const RenderCard = ({ card }) => {
 
     return notifications.showNotification({
       color: "red",
-      icon: <XCircleFillIcon/>,
+      icon: <XCircleFillIcon />,
       title: 'Oh no!',
       message: 'You can\'t remove an active card!',
     })
   }
 
   const handleActivateCard = (creditCard) => {
-    if(!creditCard.cardStateActive) {
+    if (!creditCard.cardStateActive) {
       notifications.showNotification({
         color: "green",
-        icon: <CheckCircleFillIcon/>,
+        icon: <CheckCircleFillIcon />,
         title: 'Yay!',
         message: 'Your card is now active!',
       })
@@ -58,7 +58,7 @@ const RenderCard = ({ card }) => {
 
     return notifications.showNotification({
       color: "red",
-      icon: <XCircleFillIcon/>,
+      icon: <XCircleFillIcon />,
       title: 'Oh no!',
       message: 'Card is already active!',
     })
@@ -75,7 +75,7 @@ const RenderCard = ({ card }) => {
           <Text>Active: {selectedCard?.cardStateActive ? 'YES' : 'NO'}</Text>
         </Container>
         <SimpleGrid cols={2}>
-          <Button leftIcon={<CheckIcon size={14}/>} onClick={() => handleActivateCard(selectedCard)}>
+          <Button leftIcon={<CheckIcon size={14} />} onClick={() => handleActivateCard(selectedCard)}>
             Set as active
           </Button>
 
@@ -87,7 +87,7 @@ const RenderCard = ({ card }) => {
 
       {card.map((creditCard, i) => {
         return (
-          <Box sx={classes.cardSection} onClick={() => { setOpened(true); setSelectedCard(creditCard)}} key={i} >
+          <Box sx={classes.cardSection} onClick={() => { setOpened(true); setSelectedCard(creditCard) }} key={i} >
             <CreditCard
               bankName='Peepo Bank'
               cardHolder={creditCard.cardName}

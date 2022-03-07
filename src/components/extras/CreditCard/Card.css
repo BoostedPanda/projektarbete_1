@@ -35,19 +35,16 @@
     font-size: 26px;
     text-align: right;
     margin-right: 8px;
-    /*font-family: 'Courier New', Courier, monospace;*/
 }
 
 .Card-bank-number {
     font-size: 18px;
-    /*font-family: 'Courier New', Courier, monospace;*/
     margin-left: 10px;
     margin-top: 16px;
 }
 
 .Card-name-holder {
     font-size: 16px;
-    /*font-family: 'Courier New', Courier, monospace;*/
     margin-left: 10px;
     display: flex;
     flex: 1;

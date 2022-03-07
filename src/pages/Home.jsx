@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ActiveCard from "../components/ActiveCard";
+
 import { HeaderTitle } from "../components/extras";
 import { Card, Image, createStyles, Button } from "@mantine/core";
 
@@ -28,13 +28,13 @@ function Home() {
   return (
     <Card shadow="sm" padding="lg" sx={classes.cardPosition}>
       <Card.Section>
-          <HeaderTitle size={1} sx={classes.textOverlay}>
-            Projekt Arbete PogU
-          </HeaderTitle>
+        <HeaderTitle size={1} sx={classes.textOverlay}>
+          Projekt Arbete PogU
+        </HeaderTitle>
         <Image src={headerImages[Math.floor(Math.random() * (headerImages.length - 0) + 0)]} height={160} />
       </Card.Section>
 
-      <ActiveCard />
+      {/* <ActiveCard /> */}
 
       <Button component={Link} to="/addcard" variant="light" color="blue" fullWidth style={{ marginTop: 14 }}>
         Add new card
